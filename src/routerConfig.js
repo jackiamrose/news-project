@@ -27,6 +27,10 @@ export default [
     	 component:Search
     },
     {
+        path:'/zixun',
+        component:Home
+    },
+    {
         path:'/play',
         component:Play
     },

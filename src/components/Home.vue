@@ -1,15 +1,17 @@
 <template>
-  <div class='ret'>
+  <div class='ret' ref="bScroll">
      <Slide></Slide>
-     <ul>
-      <li class='clearfix list' v-for='item  in data '>
-           <div class='left'><img v-bind:src='item.url'></div>
-           <div class='right'>
-                <h3>{{item.title}}</h3>
-                <p>{{item.content}}</p>
-           </div>
-      </li>
-     </ul>
+		 <div class="better-scroll">
+			<ul>
+				<li class='clearfix list' v-for='item  in data' :key="item.id">
+						<div class='list-image'><img v-bind:src='item.url'></div>
+						<div class='list-info'>
+									<h4>{{item.title}}</h4>
+									<p>{{item.content}}</p>
+						</div>
+				</li>
+			</ul>
+		 </div>
   </div>
 </template>   
 <style scoped>
@@ -22,26 +24,38 @@
 		 	}
 	 	
     .list{
-    	padding-bottom:3px;
+			position: relative;
+			overflow:hidden;
+    	padding:10px 0;
     	width:100%;
     	margin-top:3px;
-    	border-bottom:1px solid #999;
-    	}
+    }
+
+		.list:after{
+			background: #dbdbdb;
+			width:100%;
+			height:1px;
+			transform: scaleY(.5);
+			position:absolute;
+			bottom:0;
+			left:0;
+		}
     	
-    .left{
+    .list-image{
     	float:left;
+			margin-right:10px;
     }
     
     	
-		.left img{
+		.list-image img{
 			width:60px;
 			height:60px;
 		}
 		
-	  .right{
-	  	padding-left:60px;
+	  .list-info{
+			
 	  } 
-    .right p{
+    .list-info p{
     	margin-top:4px;
     	font-size:14px;
     	text-overflow: ellipsis;
@@ -53,28 +67,36 @@
 
 </style> 
 <script>
+import Slide from './childrenComponents/Slide.vue';
+import BScroll from 'better-scroll';
 
-import slide from './childrenComponents/Slide.vue'
 export default {
     data(){
     	return{
     		data:[]
     	}
-    },
+		},
+		beforeCreate(){
+				var _this = this;
+    		this.$http.get('src/assets/data/news.json').then( res => {
+    			_this.data = res.data;
+    		}).catch( err => {console.log(err)})
+		},
     mounted(){
-    	 this.getData();
+				if(!this.picScroll){
+					this.picScroll = new BScroll(this.$refs.bScroll,{
+						freeScroll:true,
+						scrollX: true,
+						eventPassthrough: 'vertical'
+					})
+				}else{
+						this.picScroll.refresh();
+				} 
     },
     methods:{
-    	getData(){
-    		var _this=this;
-    		this.$http.get('src/assets/data/news.json').then((res) => {
-    			_this.data = res.data;
-    			
-    		}).catch((err) => {console.log(err)})
-    	}
     },
     components:{
-      Slide:slide
+      Slide
     }
 
 }

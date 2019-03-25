@@ -1,21 +1,21 @@
 <template>
   <div id="app">
-     <head-nav v-show='headerShow'></head-nav>
-     <transition >
-          <keep-alive>
-             <router-view class='animated slideInRight'></router-view>
-          </keep-alive>
+     <head-nav v-show='headerShow' :cur-page="page" ></head-nav>
+     <transition :name="slidename">
+        <keep-alive>
+            <router-view></router-view>
+        </keep-alive>
      </transition>
      <my-footer v-show='footerShow'></my-footer>
   </div>
 </template>
 
 <script>
-import header from './components/Nav.vue';
-import footer from './components/Footer.vue'
+import headNav from './components/Nav.vue';
+import myFooter from './components/Footer.vue'
 
 
-import home from './components/Home.vue'
+import Home from './components/Home.vue'
 
 
 import {mapGetters} from 'vuex'
@@ -23,35 +23,55 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'app',
   components:{
-    headNav:header,
-    myFooter:footer,
-    Home:home
+    headNav,
+    myFooter,
+    Home
+   },
+   data(){
+      return {
+       page:0,
+       path : [] ,
+       slidename : ""
+      }
    },
    computed:mapGetters([
      'headerShow','footerShow'
    ]),
    watch:{
-     $route(to){
-       var path=to.path.substring(1);
-       this.showChange(path);
+     $route(to,from){
+       var pathname = to.path.substring(1);
+       this.showChange(pathname);
+       var toIndex = to.query.index;
+       var fromIndex = from.query.index;
+       //console.log(toIndex,fromIndex);
+       this.slidename = toIndex > fromIndex ? 'slide-left' : 'slide-right';
      }
    },
    methods:{
       showChange(path){
          if(path === 'live' || path === 'sub' || path ==='home'){
+             this.page = Number(location.search.substring(1).match(/\S+(?=\=(\d*))/)[1]);
              this.$store.dispatch('showHeader');
          }else if(path === 'info' || path === 'shequ' || path === 'play' || path === 'weizhi'){
-         	   this.$store.dispatch('hideHeader');
+         	 this.$store.dispatch('hideHeader');
+         }else if(path === 'zixun') {
+             this.$store.dispatch('showHeader');
+             this.page = 0;
          }
          
       },
+   },
+   mounted(){
+      this.page = location.pathname.substr(1);
+      this.showChange(this.page);
+      var arrPath = this.$router.options.routes; //this.$router对象VueRouter下的option.rountes可以拿到路由路径
+      this.path = arrPath.slice(0,arrPath.length-1); 
    }
 
 }
 </script>
 
 <style>
-
  body,
     div,
     dl,
@@ -77,6 +97,9 @@ export default {
     td {
         margin: 0;
         padding: 0;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
     }
 
     table {
@@ -132,12 +155,30 @@ export default {
     h4,
     h5,
     h6 {
-        font-size: 100%;
         font-weight: normal;
         /*清除标题标签的默认样式*/
     }
 
-    a {
+    h1{
+        font-size:24px;
+    }
+    h2{
+        font-size:20px;
+    }
+    h3{
+        font-size:18px;
+    }
+    h4{
+        font-size:16px;
+    }
+    h5{
+        font-size:14px;
+    }
+    h6{
+        font-size:12px;
+    }
+
+    a,a:hover{
         text-decoration: none;
         /*大部分页面中的链接没有下划线*/
     }
@@ -158,15 +199,54 @@ export default {
 
     html,
     body {
+        position:relative;
+        overflow:hidden;
         height: 100%;
         width: 100%;
-       
+        max-width:750px;
+        margin: 0 auto;
     }
 
     html {
-        font-size:20px;
-        font-family: "Consolas", "微软雅黑";
+        -webkit-overflow-scrolling: touch;
         -webkit-tap-highlight-color: transparent;
-
+        -webkit-text-size-adjust: none;
+        -webkit-touch-callout: none;
+        -webkit-font-smoothing: antialiased;
     }
+
+    .inner-container::-webkit-scrollbar {
+        display: none;
+    }   
+    .slide-left-leave-active,.slide-left-enter-active{
+        transition:all .5s linear;
+        transform: translateX(0);
+    }
+    .slide-left-enter{
+        transform:translateX(100%);
+    }
+    .slide-left-leave-to{
+        transform:translateX(-100%);
+        opacity:0;
+    }
+
+    .slide-right-leave-active,.slide-right-enter-active{
+        transition:all .5s linear;
+        transform: translateX(0);
+    }
+    .slide-right-enter{
+        transform:translateX(-100%);
+        opacity: 0
+    }
+    .slide-right-leave-to{
+        transform:translateX(100%);
+    }
+    #app{
+        height:100%;
+        overflow-y:auto;
+    }
+    .content-wrap{
+		margin:28px 0 41px 0;
+        overflow-y:auto;
+	}
 </style>

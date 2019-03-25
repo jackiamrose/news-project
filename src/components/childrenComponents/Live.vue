@@ -6,7 +6,7 @@
  		</div>
 	    <div class='liver'>
 		  <ul>
-			<li v-for='content in liveData'>
+			<li v-for='content in liveData' :key="content.id">
 				<a :href="content.http" :title='content.data.title'>
 					<div class='image'>
 						<img :src="content.src" :alt="content.data.title" />
@@ -38,13 +38,8 @@
   	}
   	
   .content{
-  	padding:0 8px;
+  	padding:0;
   }
-  	
-  .tj{
-  	
-  	border-bottom:1px solid #ccc;
-  }	
   
   .tj h3{
   	font-size:14px;
@@ -53,36 +48,48 @@
   	line-height:32px;
   }
   
+  .liver ul{
+	display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+	display: -moz-box; /* Firefox 17- */
+	display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+	display: -moz-flex; /* Firefox 18+ */
+	display: -ms-flexbox; /* IE 10 */
+	display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+  }
+
   li{
+	width:32%;  
+	margin-bottom:10px;
   	background-color: white;
-  	width:30%;
-  	margin:3px 0 5px;
-  	margin-right:3%;
-  	display:inline-block;
   }
-  
-  li:hover{
-  	box-shadow: 0 2px 0 #999;
-  }
-  
   
   li a{
-  	color:black;
+  	color:#000;
   }
   
   li .wrap-top1,li .wrap-top2{
   	position:relative;
   	line-height:20px;
   	font-size:12px;
-    color:#666
+    color:#666;
+	white-space: nowrap;
   }
   
-  .image{
-  	position:relative;
+  li .image{
+	position:relative;
+	overflow:hidden;
   }
-  
+
+  li .image:hover img{
+     transform:scale(1.1);
+  }
   .image img{
-  	width:100%
+	transition:all .5s linear;
+  	position:relative;
+	width:100%
   }
   
   .wrap-top1 .descontent{
@@ -135,7 +142,7 @@
     opacity:0.8;
   }
   
-  li:hover .mask{
+  li .image:hover .mask{
   	transition:all 0.1s linear;
   	top:0;
   	z-index:999;
@@ -149,26 +156,19 @@ export default {
    		liveData:[]
    	}
    },
+   beforeCreate(){
+			var _this = this;
+			this.$http.get('src/assets/data/live.json')
+						.then( data =>{
+							_this.liveData = data.data
+						}).catch(err => console.log(err))
+
+   },
    mounted(){
-   	this.getData()
+   	
    },
    methods:{
-   	getData(){
-   		var _this=this;
-   		$(function(){
-   			$.ajax({
-   				url:'src/assets/data/live.json',
-   				dataType:'json',
-   				async:true,
-   				success:function(data){
-   					_this.liveData=data
-   				},
-   				error:function(err){
-   					console.log(err)
-   				}
-   			})
-   		})
-   	}
+
    }
 
 }

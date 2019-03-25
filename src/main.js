@@ -3,10 +3,12 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import axios from 'axios'
 import Mint from 'mint-ui'
-import 'mint-ui/lib/style.css'
+import VueAwesomeSwiper from 'vue-awesome-swiper';
+import 'mint-ui/lib/style.css';
 
 Vue.use(VueRouter);
 Vue.use(Mint);
+Vue.use(VueAwesomeSwiper);
 
 
 import App from './App.vue' //主页

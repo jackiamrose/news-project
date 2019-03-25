@@ -1,34 +1,62 @@
 <template>
   <div class='nav'>
       <ul>
-          <router-link tag="li" to="/home">
-              <a  class='activeClass'>热点</a>
-          </router-link>
-          <router-link tag="li" to="/sub">
-              <a>订阅</a>
-          </router-link>
-          <router-link tag="li" to="/live" >
-              <a>直播</a>
-          </router-link>
-          <router-link tag="li" to="/search">
-              <a><span class='icon'></span></a>
+          <router-link v-for="(item,index) in liveData" :key="item.id" tag="li" :to="item.path +'?index=' + index" @click.native="changeClass(index)">
+              <a v-if="index !== liveData.length-1" :class="{activeClass:nowPage==index}">{{item.text}}</a>
+							<a v-else><span class="icon"></span></a>
           </router-link>
       </ul>
   </div>
-</template>   
+</template>
+
+<script>
+export default {
+	props:{
+		curPage:{
+			type:Number
+		}
+	},
+	computed:{
+		nowPage:{
+			set(){},
+			get(){
+				return this.curPage
+			}	
+		}
+	},
+  data(){
+  return {
+		liveData:[{text:'热点',path:'/home'},{text:'订阅',path:'/sub'},{text:'直播',path:'live'},{text:'',path:'/search'}],
+    value:'',
+    }
+  },
+  mounted(){
+  
+	},
+	beforeCreate() {
+		 
+	},
+  methods:{
+  	changeClass(index){
+			if(index==this.liveData.length-1) return;
+			this.nowPage =  index;
+		}
+  }
+}
+</script>  
 <style scoped>
 	.nav{
 	  position:fixed;
 	  top:0;
 	  width:100%;
+		max-width:750px;
 	  z-index:1000;
 	  background: #f00;
 	 }
 	 	
    ul{
    	display:flex;
-   	font-size:18px;
-   	
+   	font-size:16px;
    	overflow: hidden;
    	padding-left:4px;
    	width:50%
@@ -76,25 +104,3 @@
    
 
 </style> 
-<script>
-export default {
-  data(){
-  return {
-    value:'',
-    }
-  },
-  mounted(){
-  	this.show();
-  },
-  methods:{
-  	show:function(){
-  		  $('.nav a').click(function(){
-  			$('.nav a').attr('class','');
-  	  	$(this).addClass('activeClass');
-  	 })
-  	}
-  }
-}
-
-
-</script>  

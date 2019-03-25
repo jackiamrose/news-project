@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
-
+process.traceDeprecation = true
+process.noDeprecation = true
 module.exports = {
   entry: './src/main.js',
   output: {
@@ -26,8 +27,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'css-loader',
-        exclude: /style-loader!css-loader/
+        loader: 'style-loader!css-loader',
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -72,4 +72,6 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true
     })
   ])
+
 }
+

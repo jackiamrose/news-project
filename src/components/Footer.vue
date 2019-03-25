@@ -1,54 +1,22 @@
 <template>
  <div class="footer">
      <ul>
-       <router-link to="/home"  tag="li">
+       <router-link :qid="index" v-for="(item,index) in iconData" @click.native="addClass(index)" :key="item.id" :to="item.path+'?index='+index" tag="li">
          <a>
-           <img src="../assets/images/red_zixun.png"  alt=""/>
-           <img src="../assets/images/zixun.png" alt="" />
-           <p>资讯</p>
-         </a>
-       </router-link>
-       <router-link to="/play" tag="li">
-         <a>
-         <img src="../assets/images/red_play.png"  alt=""/>
-         <img src="../assets/images/play.png"  alt="" />
-         <p>视频</p>
-         </a>
-       </router-link>
-       <router-link to="/weizhi" tag="li">
-         <a>
-         <img src="../assets/images/red_weizhi.png" alt="" />
-         <img src="../assets/images/weizhi.png" alt=""/>
-         <p>深圳</p>
-         </a>
-       </router-link>
-       <router-link to="/shequ" tag="li">
-         <a>
-         <img src="../assets/images/red_shequ.png" alt="" />
-         <img src="../assets/images/shequ.png" alt=""/>
-         <p>社区</p>
-         </a>
-       </router-link>
-       <router-link to="/info" tag="li"  >
-         <a>
-         <img src="../assets/images/red_my.png" alt="" />
-         <img src="../assets/images/my.png" alt="" />
-         <p>我的</p>
+           <img :src="curIndex === index?(baseUrl + 'red_'+ item.imageUrl):(baseUrl + item.imageUrl)"  :alt="item.title"/>
+           <p>{{item.title}}</p>
          </a>
        </router-link>
      </ul>
    </div>
 </template>   
 <style scoped>
-  *{
-   box-sizing: border-box
-   };
-
    .footer{
    position:fixed;
    bottom:0;
    z-index:1000;
    width:100%;
+   max-width:750px;
    background-color:#f8f8f8;
    }
    
@@ -67,7 +35,7 @@
      font-size:80%;
    }
 
-   li:first-child a{
+   li.router-link-active a{
        color:#f00
    }
 
@@ -78,22 +46,6 @@
    left:50%;
    margin-left:-10px;
    }
-   
-   .footer li:first-child img:first-of-type{
-   	display:block
-   }
-   
-    .footer li:first-child img:last-of-type{
-   	display:none
-   }
-   
-    .footer li ~ li img:last-of-type{
-   	display:block
-   }
-   
-    .footer li ~ li img:first-of-type{
-   	display:none
-   }
 
    p{
    text-align:center
@@ -102,24 +54,60 @@
 <script scoped>
 export default {
    data(){
-     return{}
+     return{
+       baseUrl:"./src/assets/images/",
+       curIndex:-1,
+       iconData:[
+         {
+           path:"/zixun",
+           title:"资讯",
+           imageUrl:"zixun.png",
+         },
+          {
+            path:"/play",
+           title:"视频",
+           imageUrl:"play.png",
+
+         },
+         {
+           path:"/weizhi",
+           title:"深圳",
+           imageUrl:"weizhi.png",
+
+         },
+         {
+           path:"/shequ",
+           title:"社区",
+           imageUrl:"shequ.png",
+         },
+         {
+           path:"/info",
+           title:"我的",
+           imageUrl:"my.png",
+
+         }
+       ]
+     }
+   },
+   computed:{
+
    },
    mounted(){
-   	this.setStyle();
+       this.curIndex = Number(location.search.substring(1).match(/\S+(?=\=(\d*))/)[1]);
+   },
+   beforeCreate() {
+     
+   },
+   created(){
+      //this.$route.curIndex = 
    },
    methods:{
-     setStyle(){
-         $('.footer ul li').click(function(){
-           $(this).find('img:first-of-type').show().end().find('img:last-of-type').hide();
-           $(this).siblings().find('img:first-of-type').hide().end().find('img:last-of-type').show();
-           $(this).find('a').css('color','#f00').end().siblings().find('a').css('color','#000000') 
-           if($(this).index() == 0){
-           	 $('.nav li a').attr('class','');
-           	 $('.nav li a:eq('+$(this).index()+')').addClass('activeClass');
-           	
-           }
-          })
+     addClass(index){
+       if(index==0){
+         
        }
+       this.curIndex = index;
+     }
      }
 }
 
